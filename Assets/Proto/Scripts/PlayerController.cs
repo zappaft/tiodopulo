@@ -1,0 +1,121 @@
+﻿using Prototipo;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Events;
+
+public class JumpbarChangeEvent : UnityEvent<float, Vector2> { }
+
+[RequireComponent(typeof(Rigidbody2D))]
+public class PlayerController : MonoBehaviour, IStatedBehaviour {
+
+    #region PlayerState
+    public enum PlayerState {
+        Grounded,
+        Jumping
+    }
+
+    private PlayerState state;
+    #endregion
+
+    private GameObject lastCollision;
+
+    private bool canJump;
+    [SerializeField] private bool OnlyOneJump;
+    [SerializeField] private Vector2 jumpPowerbarRange;
+    [SerializeField] private float jumpPowerbarModifier;
+    [SerializeField] private float verticalJumpModifier;
+    [SerializeField] private float horizontalJumpModifier;
+    private bool positiveJumpbarPower;
+    private bool shouldJump;
+
+    private float _jumpbarPower;
+    private float JumpbarPower {
+        get => _jumpbarPower;
+        set {
+            _jumpbarPower = value;
+            onJumpbarChangeEvent?.Invoke(value, jumpPowerbarRange);
+        }
+    }
+
+    private Rigidbody2D rb;
+
+    public static JumpbarChangeEvent onJumpbarChangeEvent;
+
+    private void Awake() {
+        if (onJumpbarChangeEvent == null) onJumpbarChangeEvent = new JumpbarChangeEvent();
+    }
+
+    private void Start() {
+        GameManager.Instance.stateChangeEvent?.AddListener(OnStateChange);
+        rb = GetComponent<Rigidbody2D>();
+        canJump = true;
+    }
+
+    private void Update() {
+        if (!GameManager.Instance.InGame) return;
+        PlayerInput();
+        VerifyPlayerState();
+    }
+
+    private void FixedUpdate() {
+        if (!GameManager.Instance.InGame) return;
+        Jump();
+    }
+
+    public void OnStateChange(GameManager.GameState oldState, GameManager.GameState newState) {
+        Debug.Log($"playercontroller state changed: {oldState} => {newState}");
+    }
+
+    /// <summary>
+    /// Responsável por pegar o Input do jogador, em jogo apenas!
+    /// Input de Menu ou outra coisa qualquer deve ser feito separadamente.
+    /// </summary>
+    private void PlayerInput() {
+        if (!canJump) return;
+        if (Input.GetKeyDown(KeyCode.Space)) if(state == PlayerState.Grounded) StartCoroutine("IncreasePowerbar");
+        if (Input.GetKeyUp(KeyCode.Space)) if(state == PlayerState.Grounded) ReleaseJump();
+    }
+
+    /// <summary>
+    /// Aumenta ou diminui a barra de força do pulo, baseado no limite definido no vetor jumpPowerRange.
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator IncreasePowerbar() {
+        positiveJumpbarPower = true;
+        JumpbarPower = jumpPowerbarRange.x;
+        while (true) {
+            if (JumpbarPower >= jumpPowerbarRange.y) positiveJumpbarPower = false;
+            if (JumpbarPower <= jumpPowerbarRange.x) positiveJumpbarPower = true;
+
+            JumpbarPower += jumpPowerbarModifier * Time.deltaTime * (positiveJumpbarPower ? 1 : -1);
+            yield return null;
+        }
+    }
+
+    private void ReleaseJump() {
+        StopCoroutine("IncreasePowerbar");
+        shouldJump = true;
+    }
+
+    private void Jump() {
+        if (shouldJump) {
+            shouldJump = false;
+            rb.AddForce(((Vector2.up * verticalJumpModifier) + (Vector2.right * horizontalJumpModifier)) * JumpbarPower, ForceMode2D.Impulse);
+        }
+    }
+
+    private void VerifyPlayerState() {
+        state = rb.velocity == Vector2.zero ? PlayerState.Grounded : PlayerState.Jumping;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision) {
+        if(collision.gameObject != lastCollision) {
+            lastCollision = collision.gameObject;
+            if(OnlyOneJump) canJump = true;
+        } else {
+            if(OnlyOneJump) canJump = false;
+        }
+    }
+}
