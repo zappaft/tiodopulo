@@ -3,6 +3,7 @@
 /obj
 *.csproj
 /obj
+/Library
 /Temp
 /Build
 *.rar
