@@ -60,8 +60,9 @@ namespace Prototipo {
         }
 
         private void Start() {
-            StateChangeEvent.AddListener(OnStateChange);
+            StateChangeEvent?.AddListener(OnStateChange);
             PlayerController.OnPlayerJumpEvent?.AddListener(OnPlayerJump);
+            UIManager.DevMenuEvent?.AddListener(OnDevMenuChange);
         }
 
         private void Update() {
@@ -117,6 +118,11 @@ namespace Prototipo {
         /// </summary>
         public void GameBeginning() {
             State = GameState.Menu;
+        }
+
+        private void OnDevMenuChange(DevOpts opts) {
+            _onlyOneJump = opts.onlyOneJump;
+            _camSpeed = opts.camSpeed;
         }
     }
 }

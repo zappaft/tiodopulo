@@ -55,6 +55,7 @@ namespace Prototipo {
 
         private void Start() {
             GameManager.Instance.StateChangeEvent?.AddListener(OnStateChange);
+            UIManager.DevMenuEvent?.AddListener(OnDevMenuChange);
             rb = GetComponent<Rigidbody2D>();
             canJump = true;
         }
@@ -138,6 +139,14 @@ namespace Prototipo {
             if (collision.CompareTag("Death")) {
                 GameManager.Instance.GameOver();
             }
+        }
+
+        private void OnDevMenuChange(DevOpts opts) {
+            jumpPowerbarRange = new Vector2(opts.minJumpbar, opts.maxJumpbar);
+            jumpPowerbarModifier = opts.jumpbarModifier;
+            verticalJumpModifier = opts.verticalJump;
+            horizontalJumpModifier = opts.horizontalJump;
+            if (!opts.onlyOneJump) canJump = true;
         }
     }
 

@@ -1,9 +1,20 @@
-﻿using Prototipo;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
+using System.ComponentModel;
+using System;
 
+public class DevMenuEvent : UnityEvent<DevOpts> { }
+
+public struct DevOpts {
+    public bool onlyOneJump;
+    public float camSpeed;
+    public int minJumpbar;
+    public int maxJumpbar;
+    public float jumpbarModifier;
+    public int verticalJump;
+    public int horizontalJump;
+}
 
 namespace Prototipo {
 
@@ -20,12 +31,35 @@ namespace Prototipo {
         [SerializeField] private GameObject endObj;
         #endregion
 
+        #region devMenu
+        [Header("DevMenu")]
+        [SerializeField] private RectTransform menuContent;
+        [SerializeField] private RectTransform menuScroll;
+
+        [SerializeField] private GameObject pauseObj;
+
+        [SerializeField] private Toggle onlyOneJump;
+        [SerializeField] private Slider camSpeed;
+        [SerializeField] private InputField minJumpbar;
+        [SerializeField] private InputField maxJumpbar;
+        [SerializeField] private Slider JumpbarModifier;
+        [SerializeField] private InputField verticalJump;
+        [SerializeField] private InputField horizontalJump;
+        #endregion
+
+        public static DevMenuEvent DevMenuEvent { get; private set; }
+
+        private void Awake() {
+            if (DevMenuEvent == null) DevMenuEvent = new DevMenuEvent();
+        }
+
         private void Start() {
             PlayerController.OnJumpbarChangeEvent.AddListener(OnPowerbarChange);
             introObj.GetComponent<GenericAnim>().SetListener(IntroOut);
             introAnimation = introObj.GetComponent<Animation>();
             GameManager.Instance.StateChangeEvent.AddListener(OnStateChange);
             GameManager.ScoreChangeEvent.AddListener(OnScoreChange);
+            AdjustMenu();
         }
 
         private void Update() {
@@ -69,9 +103,41 @@ namespace Prototipo {
             endObj.SetActive(true);
         }
 
+        private void AdjustMenu() {
+            try {
+                int childCount = menuContent.childCount;
+                float childHeight = menuContent.GetChild(0).GetComponent<RectTransform>().rect.height;
+                float spacing = menuContent.GetComponent<VerticalLayoutGroup>().spacing;
+                float contentHeight = childHeight * childCount + spacing * (childCount - 1);
+                menuContent.sizeDelta = new Vector2(menuContent.rect.width, contentHeight);
+            } catch {
+                Debug.Log("Não foi possível ajustar a lista de menu");
+            }
+        }
+
+        public void OnValueChange() {
+            DevMenuEvent?.Invoke(new DevOpts {
+                onlyOneJump = onlyOneJump.isOn,
+                camSpeed = camSpeed.value,
+                minJumpbar = int.Parse(minJumpbar.text),
+                maxJumpbar = int.Parse(maxJumpbar.text),
+                jumpbarModifier = JumpbarModifier.value,
+                verticalJump = int.Parse(verticalJump.text),
+                horizontalJump = int.Parse(horizontalJump.text)
+            });
+        }
+
         public void OnStateChange(GameManager.GameState oldState, GameManager.GameState newState) {
-            if(newState == GameManager.GameState.EndGame) {
+            if (newState == GameManager.GameState.EndGame) {
                 EndScreen();
+            }
+
+            if(newState == GameManager.GameState.Paused) {
+                pauseObj.SetActive(true);
+            }
+
+            if(oldState == GameManager.GameState.Paused) {
+                pauseObj.SetActive(false);
             }
         }
 
