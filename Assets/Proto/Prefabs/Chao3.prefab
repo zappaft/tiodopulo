@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6150558657959879394}
   m_Layer: 0
   m_Name: Chao3
-  m_TagString: Untagged
+  m_TagString: Platform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -2,8 +2,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.SocialPlatforms.Impl;
 
 namespace Prototipo {
 
@@ -32,6 +35,9 @@ namespace Prototipo {
         private bool shouldJump;
 
         private float _jumpbarPower;
+        [HideInInspector] public float Score { get; private set; }
+        [SerializeField] private Text scoreText;
+
         private float JumpbarPower {
             get => _jumpbarPower;
             set {
@@ -98,9 +104,19 @@ namespace Prototipo {
         /// <summary>
         /// Permite que o FixedUpdate execute a física do pulo.
         /// </summary>
-        private void ReleaseJump() {
+        private void ReleaseJump()
+        {
             StopCoroutine("IncreasePowerbar");
             shouldJump = true;
+            ScoreCount();
+        }
+        /// <summary>
+        /// entrega o valor do score em texto com base em quantos pulos forem bem sucedidos
+        /// </summary>
+        private void ScoreCount()
+        {
+            Score++;
+            scoreText.text = Score.ToString();
         }
 
         /// <summary>
@@ -121,10 +137,13 @@ namespace Prototipo {
         }
 
         private void OnCollisionEnter2D(Collision2D collision) {
-            if (collision.gameObject != lastCollision) {
+            if (collision.gameObject != lastCollision) 
+            {
                 lastCollision = collision.gameObject;
                 if (GameManager.Instance.OnlyOneJump) canJump = true;
-            } else {
+            } 
+            else 
+            {
                 if (GameManager.Instance.OnlyOneJump) canJump = false;
             }
         }
