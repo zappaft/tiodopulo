@@ -17,7 +17,7 @@ namespace Prototipo {
         [SerializeField] private GameObject cam;
 
         private void Start() {
-            GameManager.Instance.stateChangeEvent?.AddListener(OnStateChange);
+            GameManager.Instance.StateChangeEvent?.AddListener(OnStateChange);
             cam.GetComponent<CameraController>().CamCollisionEvent?.AddListener(OnCamCollision);
         }
 

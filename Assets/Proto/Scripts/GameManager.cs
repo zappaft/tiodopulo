@@ -4,6 +4,7 @@ using UnityEngine.Events;
 namespace Prototipo {
 
     public class StateChangeEvent : UnityEvent<GameManager.GameState, GameManager.GameState> { }
+    public class ScoreChangeEvent : UnityEvent<int> { }
 
     public class GameManager : MonoBehaviour, IStatedBehaviour {
 
@@ -21,7 +22,7 @@ namespace Prototipo {
         private GameState State {
             get => _state;
             set {
-                stateChangeEvent?.Invoke(_state, value);
+                StateChangeEvent?.Invoke(_state, value);
                 lastState = _state;
                 _state = value;
             }
@@ -32,8 +33,10 @@ namespace Prototipo {
         public bool InPause { get => State == GameState.Paused; }
         public bool InEndGame { get => State == GameState.EndGame; }
 
-        public StateChangeEvent stateChangeEvent;
+        public StateChangeEvent StateChangeEvent;
         #endregion
+
+        public static ScoreChangeEvent ScoreChangeEvent { get; private set; }
 
         [SerializeField] private bool _onlyOneJump;
         [SerializeField] private float _camSpeed;
@@ -43,17 +46,22 @@ namespace Prototipo {
         public Vector2 SpawnTimeRange { get => _spawnTimeRange / (_camSpeed * 0.75f); }
         public bool OnlyOneJump { get => _onlyOneJump; }
 
+        private int _score;
+        public int Score { get => _score; private set { ScoreChangeEvent?.Invoke(value); _score = value; } }
+
         public static GameManager Instance { get; private set; }
 
         private void Awake() {
             if (!Instance) Instance = this;
             else Destroy(this);
-            if (stateChangeEvent == null) stateChangeEvent = new StateChangeEvent();
+            if (StateChangeEvent == null) StateChangeEvent = new StateChangeEvent();
+            if (ScoreChangeEvent == null) ScoreChangeEvent = new ScoreChangeEvent();
             GameBeginning();
         }
 
         private void Start() {
-            stateChangeEvent.AddListener(OnStateChange);
+            StateChangeEvent.AddListener(OnStateChange);
+            PlayerController.OnPlayerJumpEvent?.AddListener(OnPlayerJump);
         }
 
         private void Update() {
@@ -76,6 +84,12 @@ namespace Prototipo {
 
             if (newState == GameState.Playing || newState == GameState.Menu) {
                 Time.timeScale = 1;
+            }
+        }
+
+        private void OnPlayerJump(PlayerController.PlayerState oldState, PlayerController.PlayerState newState) {
+            if(oldState == PlayerController.PlayerState.Jumping && newState == PlayerController.PlayerState.Grounded) {
+                Score++;
             }
         }
 

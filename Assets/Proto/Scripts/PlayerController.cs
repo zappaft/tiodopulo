@@ -11,6 +11,7 @@ using UnityEngine.SocialPlatforms.Impl;
 namespace Prototipo {
 
     public class JumpbarChangeEvent : UnityEvent<float, Vector2> { }
+    public class PlayerJumpEvent : UnityEvent<PlayerController.PlayerState, PlayerController.PlayerState> { }
 
     [RequireComponent(typeof(Rigidbody2D))]
     public class PlayerController : MonoBehaviour, IStatedBehaviour {
@@ -20,8 +21,8 @@ namespace Prototipo {
             Grounded,
             Jumping
         }
-
-        private PlayerState state;
+        private PlayerState _state;
+        private PlayerState State { get => _state; set { OnPlayerJumpEvent?.Invoke(_state, value); _state = value; } }
         #endregion
 
         private GameObject lastCollision;
@@ -33,29 +34,27 @@ namespace Prototipo {
         [SerializeField] private float horizontalJumpModifier;
         private bool positiveJumpbarPower;
         private bool shouldJump;
-
         private float _jumpbarPower;
-        [HideInInspector] public float Score { get; private set; }
-        [SerializeField] private Text scoreText;
-
         private float JumpbarPower {
             get => _jumpbarPower;
             set {
                 _jumpbarPower = value;
-                onJumpbarChangeEvent?.Invoke(value, jumpPowerbarRange);
+                OnJumpbarChangeEvent?.Invoke(value, jumpPowerbarRange);
             }
         }
 
         private Rigidbody2D rb;
 
-        public static JumpbarChangeEvent onJumpbarChangeEvent;
+        public static JumpbarChangeEvent OnJumpbarChangeEvent { get; private set; }
+        public static PlayerJumpEvent OnPlayerJumpEvent { get; private set; }
 
         private void Awake() {
-            if (onJumpbarChangeEvent == null) onJumpbarChangeEvent = new JumpbarChangeEvent();
+            if (OnJumpbarChangeEvent == null) OnJumpbarChangeEvent = new JumpbarChangeEvent();
+            if (OnPlayerJumpEvent == null) OnPlayerJumpEvent = new PlayerJumpEvent();
         }
 
         private void Start() {
-            GameManager.Instance.stateChangeEvent?.AddListener(OnStateChange);
+            GameManager.Instance.StateChangeEvent?.AddListener(OnStateChange);
             rb = GetComponent<Rigidbody2D>();
             canJump = true;
         }
@@ -81,8 +80,8 @@ namespace Prototipo {
         /// </summary>
         private void PlayerInput() {
             if (!canJump) return;
-            if (Input.GetKeyDown(KeyCode.Space)) if (state == PlayerState.Grounded) StartCoroutine("IncreasePowerbar");
-            if (Input.GetKeyUp(KeyCode.Space)) if (state == PlayerState.Grounded) ReleaseJump();
+            if (Input.GetKeyDown(KeyCode.Space)) if (State == PlayerState.Grounded) StartCoroutine("IncreasePowerbar");
+            if (Input.GetKeyUp(KeyCode.Space)) if (State == PlayerState.Grounded) ReleaseJump();
         }
 
         /// <summary>
@@ -104,19 +103,9 @@ namespace Prototipo {
         /// <summary>
         /// Permite que o FixedUpdate execute a física do pulo.
         /// </summary>
-        private void ReleaseJump()
-        {
+        private void ReleaseJump() {
             StopCoroutine("IncreasePowerbar");
             shouldJump = true;
-            ScoreCount();
-        }
-        /// <summary>
-        /// entrega o valor do score em texto com base em quantos pulos forem bem sucedidos
-        /// </summary>
-        private void ScoreCount()
-        {
-            Score++;
-            scoreText.text = Score.ToString();
         }
 
         /// <summary>
@@ -133,17 +122,14 @@ namespace Prototipo {
         /// Verifica a velocidade do rigidbody para definir o estado do jogador.
         /// </summary>
         private void VerifyPlayerState() {
-            state = rb.velocity == Vector2.zero ? PlayerState.Grounded : PlayerState.Jumping;
+            State = rb.velocity == Vector2.zero ? PlayerState.Grounded : PlayerState.Jumping;
         }
 
         private void OnCollisionEnter2D(Collision2D collision) {
-            if (collision.gameObject != lastCollision) 
-            {
+            if (collision.gameObject != lastCollision) {
                 lastCollision = collision.gameObject;
                 if (GameManager.Instance.OnlyOneJump) canJump = true;
-            } 
-            else 
-            {
+            } else {
                 if (GameManager.Instance.OnlyOneJump) canJump = false;
             }
         }

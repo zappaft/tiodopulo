@@ -10,6 +10,8 @@ namespace Prototipo {
     public class UIManager : MonoBehaviour, IStatedBehaviour {
 
         [SerializeField] private Slider powerbarSlide;
+        [SerializeField] private Text scoreText;
+        [SerializeField] private Text endScoreText;
 
         #region Animations
         [SerializeField] private GameObject introObj;
@@ -19,11 +21,11 @@ namespace Prototipo {
         #endregion
 
         private void Start() {
-            PlayerController.onJumpbarChangeEvent.AddListener(OnPowerbarChange);
+            PlayerController.OnJumpbarChangeEvent.AddListener(OnPowerbarChange);
             introObj.GetComponent<GenericAnim>().SetListener(IntroOut);
             introAnimation = introObj.GetComponent<Animation>();
-
-            GameManager.Instance.stateChangeEvent.AddListener(OnStateChange);
+            GameManager.Instance.StateChangeEvent.AddListener(OnStateChange);
+            GameManager.ScoreChangeEvent.AddListener(OnScoreChange);
         }
 
         private void Update() {
@@ -71,6 +73,11 @@ namespace Prototipo {
             if(newState == GameManager.GameState.EndGame) {
                 EndScreen();
             }
+        }
+
+        private void OnScoreChange(int newScore) {
+            scoreText.text = newScore.ToString();
+            endScoreText.text = newScore.ToString();
         }
     }
 }

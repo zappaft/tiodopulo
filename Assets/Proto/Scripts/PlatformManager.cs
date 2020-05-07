@@ -14,7 +14,7 @@ namespace Prototipo {
         private float counter;
 
         private void Start() {
-            GameManager.Instance.stateChangeEvent?.AddListener(OnStateChange);
+            GameManager.Instance.StateChangeEvent?.AddListener(OnStateChange);
             SetNextSpawnTimer();
         }
 
