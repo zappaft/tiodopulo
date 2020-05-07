@@ -6,6 +6,7 @@ TagManager:
   tags:
   - BGCollider
   - Platform
+  - Death
   layers:
   - Default
   - TransparentFX
