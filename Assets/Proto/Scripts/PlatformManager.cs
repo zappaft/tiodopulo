@@ -8,14 +8,13 @@ namespace Prototipo {
         [SerializeField] private List<GameObject> platforms;
 
         [SerializeField] private Transform platformsParent;
-        [SerializeField] private Transform spawnPoint; 
+        [SerializeField] private Transform spawnPoint;
 
         private float spawnTime;
         private float counter;
 
         private void Start() {
             GameManager.Instance.StateChangeEvent?.AddListener(OnStateChange);
-            SetNextSpawnTimer();
         }
 
         private void Update() {
@@ -24,7 +23,7 @@ namespace Prototipo {
         }
 
         public void OnStateChange(GameManager.GameState oldState, GameManager.GameState newState) {
-            Debug.Log($"platformanager state changed: {oldState} => {newState}");
+            if (oldState == GameManager.GameState.Menu && newState == GameManager.GameState.Playing) SetNextSpawnTimer();
         }
 
         /// <summary>
@@ -35,12 +34,13 @@ namespace Prototipo {
             if (counter >= spawnTime) CreateNewPlatform();
         }
 
+        [SerializeField] private GameObject platformPrefab;
         /// <summary>
         /// Sorteia uma plataforma da lista "platforms", instancia a plataforma e chama o reset do timer de spawner.
         /// </summary>
         private void CreateNewPlatform() {
-            int platformIndex = Random.Range(0, platforms.Count);
-            GameObject spawnedPlatform = Instantiate(platforms[platformIndex], spawnPoint.position, Quaternion.identity, platformsParent);
+            Instantiate(platformPrefab, spawnPoint.position, Quaternion.identity, platformsParent).transform.localScale = new Vector3(
+                Random.Range(1, 2.2f), Random.Range(5, 15), 1);
             SetNextSpawnTimer();
         }
 

@@ -11,7 +11,7 @@ using UnityEngine.SocialPlatforms.Impl;
 namespace Prototipo {
 
     public class JumpbarChangeEvent : UnityEvent<float, Vector2> { }
-    public class PlayerJumpEvent : UnityEvent<PlayerController.PlayerState, PlayerController.PlayerState> { }
+    public class PlayerJumpEvent : UnityEvent<PlayerController.PlayerState, PlayerController.PlayerState, bool> { }
 
     [RequireComponent(typeof(Rigidbody2D))]
     public class PlayerController : MonoBehaviour, IStatedBehaviour {
@@ -22,10 +22,11 @@ namespace Prototipo {
             Jumping
         }
         private PlayerState _state;
-        private PlayerState State { get => _state; set { OnPlayerJumpEvent?.Invoke(_state, value); _state = value; } }
+        private PlayerState State { get => _state; set { OnPlayerJumpEvent?.Invoke(_state, value, repeatedCollision); _state = value; } }
         #endregion
 
         private GameObject lastCollision;
+        private bool repeatedCollision;
 
         private bool canJump;
         [SerializeField] private Vector2 jumpPowerbarRange;
@@ -58,6 +59,8 @@ namespace Prototipo {
             UIManager.DevMenuEvent?.AddListener(OnDevMenuChange);
             rb = GetComponent<Rigidbody2D>();
             canJump = true;
+
+            DevSetup();
         }
 
         private void Update() {
@@ -72,7 +75,7 @@ namespace Prototipo {
         }
 
         public void OnStateChange(GameManager.GameState oldState, GameManager.GameState newState) {
-            Debug.Log($"playercontroller state changed: {oldState} => {newState}");
+            //Debug.Log($"playercontroller state changed: {oldState} => {newState}");
         }
 
         /// <summary>
@@ -128,9 +131,11 @@ namespace Prototipo {
 
         private void OnCollisionEnter2D(Collision2D collision) {
             if (collision.gameObject != lastCollision) {
+                repeatedCollision = false;
                 lastCollision = collision.gameObject;
                 if (GameManager.Instance.OnlyOneJump) canJump = true;
             } else {
+                repeatedCollision = true;
                 if (GameManager.Instance.OnlyOneJump) canJump = false;
             }
         }
@@ -147,6 +152,14 @@ namespace Prototipo {
             verticalJumpModifier = opts.verticalJump;
             horizontalJumpModifier = opts.horizontalJump;
             if (!opts.onlyOneJump) canJump = true;
+        }
+
+        private void DevSetup() {
+            UIManager.initializer.jumpbarModifier = PlayerPrefs.GetFloat("JumpbarModifier", jumpPowerbarModifier);
+            UIManager.initializer.verticalJump = PlayerPrefs.GetFloat("VerticalJump", verticalJumpModifier);
+            UIManager.initializer.horizontalJump = PlayerPrefs.GetFloat("HorizontalJump", horizontalJumpModifier);
+            UIManager.initializer.minJumpbar = PlayerPrefs.GetFloat("MinJumpbar", jumpPowerbarRange.x);
+            UIManager.initializer.maxJumpbar = PlayerPrefs.GetFloat("MaxJumpbar", jumpPowerbarRange.y);
         }
     }
 

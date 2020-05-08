@@ -9,16 +9,18 @@ public class DevMenuEvent : UnityEvent<DevOpts> { }
 public struct DevOpts {
     public bool onlyOneJump;
     public float camSpeed;
-    public int minJumpbar;
-    public int maxJumpbar;
+    public float minJumpbar;
+    public float maxJumpbar;
     public float jumpbarModifier;
-    public int verticalJump;
-    public int horizontalJump;
+    public float verticalJump;
+    public float horizontalJump;
 }
 
 namespace Prototipo {
 
     public class UIManager : MonoBehaviour, IStatedBehaviour {
+
+        public static DevOpts initializer;
 
         [SerializeField] private Slider powerbarSlide;
         [SerializeField] private Text scoreText;
@@ -45,9 +47,19 @@ namespace Prototipo {
         [SerializeField] private Slider JumpbarModifier;
         [SerializeField] private InputField verticalJump;
         [SerializeField] private InputField horizontalJump;
-        #endregion
 
         public static DevMenuEvent DevMenuEvent { get; private set; }
+        #endregion
+
+        private void Initialize() {
+            onlyOneJump.isOn = initializer.onlyOneJump;
+            camSpeed.value = initializer.camSpeed;
+            minJumpbar.text = initializer.minJumpbar.ToString();
+            maxJumpbar.text = initializer.maxJumpbar.ToString();
+            JumpbarModifier.value = initializer.jumpbarModifier;
+            verticalJump.text = initializer.verticalJump.ToString();
+            horizontalJump.text = initializer.horizontalJump.ToString();
+        }
 
         private void Awake() {
             if (DevMenuEvent == null) DevMenuEvent = new DevMenuEvent();
@@ -95,6 +107,7 @@ namespace Prototipo {
         }
 
         public void IntroOut() {
+            Initialize();
             introObj.SetActive(false);
             GameManager.Instance.StartGame();
         }
@@ -116,6 +129,14 @@ namespace Prototipo {
         }
 
         public void OnValueChange() {
+            PlayerPrefs.SetInt("OnlyOneJump", onlyOneJump.isOn ? 1 : 0);
+            PlayerPrefs.SetFloat("CamSpeed", camSpeed.value);
+            PlayerPrefs.SetFloat("MinJumpbar", float.Parse(minJumpbar.text));
+            PlayerPrefs.SetFloat("MaxJumpbar", float.Parse(maxJumpbar.text));
+            PlayerPrefs.SetFloat("JumpbarModifier", JumpbarModifier.value);
+            PlayerPrefs.SetFloat("VerticalJump", float.Parse(verticalJump.text));
+            PlayerPrefs.SetFloat("HorizontalJump", float.Parse(horizontalJump.text));
+
             DevMenuEvent?.Invoke(new DevOpts {
                 onlyOneJump = onlyOneJump.isOn,
                 camSpeed = camSpeed.value,

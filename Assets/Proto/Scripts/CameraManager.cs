@@ -27,7 +27,7 @@ namespace Prototipo {
         }
 
         public void OnStateChange(GameManager.GameState oldState, GameManager.GameState newState) {
-            Debug.Log($"cameramanager state changed: {oldState} => {newState}");
+            //Debug.Log($"cameramanager state changed: {oldState} => {newState}");
         }
 
         /// <summary>

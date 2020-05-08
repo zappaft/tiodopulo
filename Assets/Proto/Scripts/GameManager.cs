@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace Prototipo {
@@ -43,7 +44,11 @@ namespace Prototipo {
         [SerializeField] private Vector2 _spawnTimeRange;
 
         public float CamSpeed { get => _camSpeed; }
-        public Vector2 SpawnTimeRange { get => _spawnTimeRange / (_camSpeed * 0.75f); }
+        public Vector2 SpawnTimeRange { 
+            get {
+                return _spawnTimeRange / (_camSpeed * .75f);
+            }
+        }
         public bool OnlyOneJump { get => _onlyOneJump; }
 
         private int _score;
@@ -63,6 +68,7 @@ namespace Prototipo {
             StateChangeEvent?.AddListener(OnStateChange);
             PlayerController.OnPlayerJumpEvent?.AddListener(OnPlayerJump);
             UIManager.DevMenuEvent?.AddListener(OnDevMenuChange);
+            DevSetup();
         }
 
         private void Update() {
@@ -88,9 +94,9 @@ namespace Prototipo {
             }
         }
 
-        private void OnPlayerJump(PlayerController.PlayerState oldState, PlayerController.PlayerState newState) {
+        private void OnPlayerJump(PlayerController.PlayerState oldState, PlayerController.PlayerState newState, bool repeatedCollision) {
             if(oldState == PlayerController.PlayerState.Jumping && newState == PlayerController.PlayerState.Grounded) {
-                Score++;
+                if(!repeatedCollision) Score++;
             }
         }
 
@@ -123,6 +129,11 @@ namespace Prototipo {
         private void OnDevMenuChange(DevOpts opts) {
             _onlyOneJump = opts.onlyOneJump;
             _camSpeed = opts.camSpeed;
+        }
+
+        private void DevSetup() {
+            UIManager.initializer.onlyOneJump = Convert.ToBoolean(PlayerPrefs.GetInt("OnlyOneJump", _onlyOneJump ? 1 : 0));
+            UIManager.initializer.camSpeed = PlayerPrefs.GetFloat("CamSpeed", _camSpeed);
         }
     }
 }
