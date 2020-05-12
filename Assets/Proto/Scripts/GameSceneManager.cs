@@ -1,20 +1,20 @@
-﻿using Prototipo;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameSceneManager : MonoBehaviour {
+namespace Prototipo {
 
-    public static GameSceneManager Instance { get; private set; }
+    public class GameSceneManager : MonoBehaviour {
 
-    private void Awake() {
-        if (!Instance) Instance = this;
-        else Destroy(this.gameObject);
-    }
+        public static GameSceneManager Instance { get; private set; }
 
-    public void ReloadScene() {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        GameManager.Instance.GameBeginning();
+        private void Awake() {
+            if (!Instance) Instance = this;
+            else Destroy(this.gameObject);
+        }
+
+        public void ReloadScene() {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            GameManager.Instance.GameBeginning();
+        }
     }
 }

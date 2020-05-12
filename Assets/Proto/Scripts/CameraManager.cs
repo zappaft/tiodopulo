@@ -1,8 +1,4 @@
-﻿using Prototipo;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Prototipo {
 
@@ -59,5 +55,4 @@ namespace Prototipo {
             bgToMove.transform.position = collided.transform.position + (Vector3.right * distanceBetweenEach);
         }
     }
-
 }

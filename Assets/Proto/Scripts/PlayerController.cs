@@ -113,7 +113,9 @@ namespace Prototipo {
         private void Jump() {
             if (shouldJump) {
                 shouldJump = false;
-                rb.AddForce(((Vector2.up * verticalJumpModifier) + (Vector2.right * horizontalJumpModifier)) * JumpbarPower, ForceMode2D.Impulse);
+                rb.AddForce(
+                    ((Vector2.up * verticalJumpModifier) + (Vector2.right * horizontalJumpModifier)) * JumpbarPower,
+                    ForceMode2D.Impulse);
             }
         }
 

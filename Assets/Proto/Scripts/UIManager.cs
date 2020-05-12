@@ -1,22 +1,20 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
-using System.ComponentModel;
-using System;
-
-public class DevMenuEvent : UnityEvent<DevOpts> { }
-
-public struct DevOpts {
-    public bool onlyOneJump;
-    public float camSpeed;
-    public float minJumpbar;
-    public float maxJumpbar;
-    public float jumpbarModifier;
-    public float verticalJump;
-    public float horizontalJump;
-}
 
 namespace Prototipo {
+
+    public class DevMenuEvent : UnityEvent<DevOpts> { }
+
+    public struct DevOpts {
+        public bool onlyOneJump;
+        public float camSpeed;
+        public float minJumpbar;
+        public float maxJumpbar;
+        public float jumpbarModifier;
+        public float verticalJump;
+        public float horizontalJump;
+    }
 
     public class UIManager : MonoBehaviour, IStatedBehaviour {
 
@@ -173,11 +171,11 @@ namespace Prototipo {
                 EndScreen();
             }
 
-            if(newState == GameManager.GameState.Paused) {
+            if (newState == GameManager.GameState.Paused) {
                 pauseObj.SetActive(true);
             }
 
-            if(oldState == GameManager.GameState.Paused) {
+            if (oldState == GameManager.GameState.Paused) {
                 pauseObj.SetActive(false);
             }
         }
