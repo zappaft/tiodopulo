@@ -8,7 +8,7 @@ namespace Prototipo {
     public class PlayerJumpEvent : UnityEvent<PlayerController.PlayerState, PlayerController.PlayerState, bool> { }
 
     [RequireComponent(typeof(Rigidbody2D))]
-    public class PlayerController : MonoBehaviour, IStatedBehaviour {
+    public class PlayerController : MonoBehaviour {
 
         #region PlayerState
         public enum PlayerState {
@@ -69,7 +69,7 @@ namespace Prototipo {
             Jump();
         }
 
-        public void OnStateChange(GameManager.GameState oldState, GameManager.GameState newState) {
+        private void OnStateChange(GameManager.GameState oldState, GameManager.GameState newState) {
             //Debug.Log($"playercontroller state changed: {oldState} => {newState}");
         }
 
@@ -79,8 +79,10 @@ namespace Prototipo {
         /// </summary>
         private void PlayerInput() {
             if (!canJump) return;
-            if (Input.GetKeyDown(KeyCode.Space)) if (State == PlayerState.Grounded) StartCoroutine("IncreasePowerbar");
-            if (Input.GetKeyUp(KeyCode.Space)) if (State == PlayerState.Grounded) ReleaseJump();
+            if (SystemInfo.deviceType == DeviceType.Desktop) {
+                if (InputController.DeviceBasedInput(PlayerInputType.JumpDown) && State == PlayerState.Grounded) StartCoroutine("IncreasePowerbar");
+                if (InputController.DeviceBasedInput(PlayerInputType.JumpUp) && State == PlayerState.Grounded) ReleaseJump();
+            }
         }
 
         /// <summary>
@@ -159,5 +161,4 @@ namespace Prototipo {
             UIManager.initializer.maxJumpbar = PlayerPrefs.GetFloat("MaxJumpbar", jumpPowerbarRange.y);
         }
     }
-
 }

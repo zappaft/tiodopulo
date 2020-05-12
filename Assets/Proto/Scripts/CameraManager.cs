@@ -2,7 +2,7 @@
 
 namespace Prototipo {
 
-    public class CameraManager : MonoBehaviour, IStatedBehaviour {
+    public class CameraManager : MonoBehaviour {
 
         [Header("Background")]
         [SerializeField] private GameObject background1;
@@ -24,7 +24,7 @@ namespace Prototipo {
             MoveCamera();
         }
 
-        public void OnStateChange(GameManager.GameState oldState, GameManager.GameState newState) {
+        private void OnStateChange(GameManager.GameState oldState, GameManager.GameState newState) {
             //Debug.Log($"cameramanager state changed: {oldState} => {newState}");
         }
 

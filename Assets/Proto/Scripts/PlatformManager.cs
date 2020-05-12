@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Prototipo {
 
-    public class PlatformManager : MonoBehaviour, IStatedBehaviour {
+    public class PlatformManager : MonoBehaviour {
 
         [SerializeField] private List<GameObject> platforms;
 
@@ -22,7 +22,7 @@ namespace Prototipo {
             CountdownToSpawn();
         }
 
-        public void OnStateChange(GameManager.GameState oldState, GameManager.GameState newState) {
+        private void OnStateChange(GameManager.GameState oldState, GameManager.GameState newState) {
             if (oldState == GameManager.GameState.Menu && newState == GameManager.GameState.Playing) SetNextSpawnTimer();
         }
 

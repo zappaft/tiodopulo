@@ -7,7 +7,7 @@ namespace Prototipo {
     public class StateChangeEvent : UnityEvent<GameManager.GameState, GameManager.GameState> { }
     public class ScoreChangeEvent : UnityEvent<int> { }
 
-    public class GameManager : MonoBehaviour, IStatedBehaviour {
+    public class GameManager : MonoBehaviour {
 
         #region GameState
         [System.Serializable]
@@ -84,7 +84,7 @@ namespace Prototipo {
             }
         }
 
-        public void OnStateChange(GameState oldState, GameState newState) {
+        private void OnStateChange(GameState oldState, GameState newState) {
             if(newState == GameState.Paused || newState == GameState.EndGame) {
                 Time.timeScale = 0;
             }
@@ -103,7 +103,7 @@ namespace Prototipo {
         /// <summary>
         /// Troca o estado do jogo entre pausado e jogando. Executando o evento stateChangeEvent.
         /// </summary>
-        private void TogglePause() { if (Input.GetKeyDown(KeyCode.Escape)) State = InGame ? GameState.Paused : GameState.Playing; }
+        private void TogglePause() { if (InputController.DeviceBasedInput(PlayerInputType.Pause)) State = InGame ? GameState.Paused : GameState.Playing; }
 
         /// <summary>
         /// Sai do menu e vai para o jogo.

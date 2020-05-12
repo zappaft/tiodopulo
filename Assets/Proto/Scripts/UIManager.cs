@@ -16,7 +16,7 @@ namespace Prototipo {
         public float horizontalJump;
     }
 
-    public class UIManager : MonoBehaviour, IStatedBehaviour {
+    public class UIManager : MonoBehaviour {
 
         public static DevOpts initializer;
 
@@ -166,7 +166,7 @@ namespace Prototipo {
             });
         }
 
-        public void OnStateChange(GameManager.GameState oldState, GameManager.GameState newState) {
+        private void OnStateChange(GameManager.GameState oldState, GameManager.GameState newState) {
             if (newState == GameManager.GameState.EndGame) {
                 EndScreen();
             }

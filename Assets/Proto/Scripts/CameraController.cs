@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -16,15 +17,22 @@ namespace Prototipo {
 
         private void Start() {
             PlayerController.OnPlayerJumpEvent.AddListener(OnPlayerJump);
+            GameManager.Instance.StateChangeEvent.AddListener(OnStateChange);
         }
 
         private void OnTriggerEnter2D(Collider2D collision) {
             if (collision.CompareTag("BGCollider")) CamCollisionEvent?.Invoke(collision.transform.parent.gameObject);
         }
 
+        private void OnStateChange(GameManager.GameState oldState, GameManager.GameState newState) {
+            if(oldState == GameManager.GameState.Playing) {
+                StopCoroutine("CameraShake");
+            }
+        }
+
         private void OnPlayerJump(PlayerController.PlayerState oldState, PlayerController.PlayerState newState, bool repeatedCollision) {
             if(oldState == PlayerController.PlayerState.Jumping && newState == PlayerController.PlayerState.Grounded && !repeatedCollision) {
-                StartCoroutine(CameraShake());
+                StartCoroutine("CameraShake");
             }
         }
 
@@ -34,8 +42,8 @@ namespace Prototipo {
             float duration = .2f;
             float strength = .02f;
             while (time < duration) {
-                float x = Random.Range(-1, 1) * strength;
-                float y = Random.Range(-1, 1) * strength;
+                float x = UnityEngine.Random.Range(-1, 1) * strength;
+                float y = UnityEngine.Random.Range(-1, 1) * strength;
                 transform.localPosition = new Vector3(x, y, originalPos.z);
                 time += Time.deltaTime;
                 yield return null;
