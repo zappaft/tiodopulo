@@ -124,18 +124,18 @@ namespace Prototipo {
             State = rb.velocity == Vector2.zero ? PlayerState.Grounded : PlayerState.Jumping;
         }
 
-        private void OnCollisionEnter2D(Collision2D collision) {
-            if (collision.gameObject != lastCollision) {
-                repeatedCollision = false;
-                lastCollision = collision.gameObject;
-                if (GameManager.Instance.OnlyOneJump) canJump = true;
-            } else {
-                repeatedCollision = true;
-                if (GameManager.Instance.OnlyOneJump) canJump = false;
-            }
-        }
-
         private void OnTriggerEnter2D(Collider2D collision) {
+            if (collision.CompareTag("Platform")) {
+                if (collision.gameObject != lastCollision) {
+                    repeatedCollision = false;
+                    lastCollision = collision.gameObject;
+                    if (GameManager.Instance.OnlyOneJump) canJump = true;
+                } else {
+                    repeatedCollision = true;
+                    if (GameManager.Instance.OnlyOneJump) canJump = false;
+                }
+            }
+
             if (collision.CompareTag("Death")) {
                 GameManager.Instance.GameOver();
             }

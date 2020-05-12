@@ -15,10 +15,12 @@ namespace Prototipo {
 
         [Header("Camera")]
         [SerializeField] private GameObject cam;
+        private GameObject camParent;
 
         private void Start() {
             GameManager.Instance.StateChangeEvent?.AddListener(OnStateChange);
             cam.GetComponent<CameraController>().CamCollisionEvent?.AddListener(OnCamCollision);
+            camParent = cam.transform.parent.gameObject;
         }
 
         private void Update() {
@@ -34,7 +36,7 @@ namespace Prototipo {
         /// Basicamente, move a câmera. Processa qualquer cálculo para movimentação da mesma.
         /// </summary>
         private void MoveCamera() {
-            cam.transform.position += Vector3.right * GameManager.Instance.CamSpeed * Time.deltaTime;
+            camParent.transform.position += Vector3.right * GameManager.Instance.CamSpeed * Time.deltaTime;
         }
 
         /// <summary>
