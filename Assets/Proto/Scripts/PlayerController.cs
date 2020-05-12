@@ -1,16 +1,10 @@
-﻿using Prototipo;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.Events;
-using UnityEngine.SocialPlatforms.Impl;
 
 namespace Prototipo {
 
-    public class JumpbarChangeEvent : UnityEvent<float, Vector2> { }
+    public class JumpbarChangeEvent : UnityEvent<float> { }
     public class PlayerJumpEvent : UnityEvent<PlayerController.PlayerState, PlayerController.PlayerState, bool> { }
 
     [RequireComponent(typeof(Rigidbody2D))]
@@ -40,7 +34,8 @@ namespace Prototipo {
             get => _jumpbarPower;
             set {
                 _jumpbarPower = value;
-                OnJumpbarChangeEvent?.Invoke(value, jumpPowerbarRange);
+                float adjustedValue = (((value - jumpPowerbarRange.x) * (Vector2.up.y - Vector2.up.x)) / (jumpPowerbarRange.y - jumpPowerbarRange.x)) + Vector2.up.x;
+                OnJumpbarChangeEvent?.Invoke(adjustedValue);
             }
         }
 

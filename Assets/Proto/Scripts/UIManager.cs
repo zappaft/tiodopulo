@@ -22,7 +22,10 @@ namespace Prototipo {
 
         public static DevOpts initializer;
 
+        private Gradient powerbarGradient;
+
         [SerializeField] private Slider powerbarSlide;
+        [SerializeField] private Image powerbarFill;
         [SerializeField] private Text scoreText;
         [SerializeField] private Text endScoreText;
 
@@ -72,6 +75,7 @@ namespace Prototipo {
             GameManager.Instance.StateChangeEvent.AddListener(OnStateChange);
             GameManager.ScoreChangeEvent.AddListener(OnScoreChange);
             AdjustMenu();
+            powerbarGradient = GetGradient();
         }
 
         private void Update() {
@@ -88,10 +92,26 @@ namespace Prototipo {
         /// </summary>
         /// <param name="newValue">Valor atual da barra de força.</param>
         /// <param name="powerbarRange">Vetor com valor inicial e final da barra.</param>
-        private void OnPowerbarChange(float newValue, Vector2 powerbarRange) {
-            powerbarSlide.minValue = powerbarRange.x;
-            powerbarSlide.maxValue = powerbarRange.y;
+        private void OnPowerbarChange(float newValue) {
+            powerbarFill.color = powerbarGradient.Evaluate(newValue);
             powerbarSlide.value = newValue;
+        }
+
+        private Gradient GetGradient() {
+            Vector2 powerbarRange = Vector2.up;
+            powerbarGradient = new Gradient();
+            GradientColorKey[] colorKey = new GradientColorKey[2];
+            colorKey[0].color = Color.red;
+            colorKey[0].time = powerbarRange.x;
+            colorKey[1].color = Color.green;
+            colorKey[1].time = powerbarRange.y;
+            GradientAlphaKey[] alphaKey = new GradientAlphaKey[2];
+            alphaKey[0].alpha = 1;
+            alphaKey[0].time = powerbarRange.x;
+            alphaKey[1].alpha = 1;
+            alphaKey[1].time = powerbarRange.y;
+            powerbarGradient.SetKeys(colorKey, alphaKey);
+            return powerbarGradient;
         }
 
         private void IntroInput() {
