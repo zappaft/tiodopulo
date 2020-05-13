@@ -94,10 +94,13 @@ namespace Prototipo {
             }
         }
 
-        private void OnPlayerJump(PlayerController.PlayerState oldState, PlayerController.PlayerState newState, bool repeatedCollision) {
-            if(oldState == PlayerController.PlayerState.Jumping && newState == PlayerController.PlayerState.Grounded) {
-                if(!repeatedCollision) Score++;
-            }
+        //private void OnPlayerJump(PlayerController.PlayerState oldState, PlayerController.PlayerState newState, bool repeatedCollision) {
+        //    if(oldState == PlayerController.PlayerState.Jumping && newState == PlayerController.PlayerState.Grounded) {
+        //        if(!repeatedCollision) Score++;
+        //    }
+        //}
+        private void OnPlayerJump() {
+            Score++;
         }
 
         /// <summary>

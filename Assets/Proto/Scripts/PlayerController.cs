@@ -5,7 +5,8 @@ using UnityEngine.Events;
 namespace Prototipo {
 
     public class JumpbarChangeEvent : UnityEvent<float> { }
-    public class PlayerJumpEvent : UnityEvent<PlayerController.PlayerState, PlayerController.PlayerState, bool> { }
+    //public class PlayerJumpEvent : UnityEvent<PlayerController.PlayerState, PlayerController.PlayerState, bool> { }
+    public class PlayerJumpEvent : UnityEvent { }
 
     [RequireComponent(typeof(Rigidbody2D))]
     public class PlayerController : MonoBehaviour {
@@ -16,9 +17,10 @@ namespace Prototipo {
             Jumping
         }
         private PlayerState _state;
-        private PlayerState State { get => _state; set { OnPlayerJumpEvent?.Invoke(_state, value, repeatedCollision); _state = value; } }
+        private PlayerState State { get => _state; set { _state = value; } }
         #endregion
 
+        private bool firstCollision;
         private GameObject lastCollision;
         private bool repeatedCollision;
 
@@ -54,6 +56,7 @@ namespace Prototipo {
             UIManager.DevMenuEvent?.AddListener(OnDevMenuChange);
             rb = GetComponent<Rigidbody2D>();
             canJump = true;
+            firstCollision = true;
 
             DevSetup();
         }
@@ -125,7 +128,8 @@ namespace Prototipo {
         /// Verifica a velocidade do rigidbody para definir o estado do jogador.
         /// </summary>
         private void VerifyPlayerState() {
-            State = rb.velocity == Vector2.zero ? PlayerState.Grounded : PlayerState.Jumping;
+            PlayerState _state = rb.velocity == Vector2.zero ? PlayerState.Grounded : PlayerState.Jumping;
+            if (State != _state) State = _state;
         }
 
         private void OnTriggerEnter2D(Collider2D collision) {
@@ -133,6 +137,8 @@ namespace Prototipo {
                 if (collision.gameObject != lastCollision) {
                     repeatedCollision = false;
                     lastCollision = collision.gameObject;
+                    if (firstCollision) firstCollision = false;
+                    else OnPlayerJumpEvent?.Invoke();
                     if (GameManager.Instance.OnlyOneJump) canJump = true;
                 } else {
                     repeatedCollision = true;

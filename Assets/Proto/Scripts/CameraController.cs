@@ -30,10 +30,13 @@ namespace Prototipo {
             }
         }
 
-        private void OnPlayerJump(PlayerController.PlayerState oldState, PlayerController.PlayerState newState, bool repeatedCollision) {
-            if(oldState == PlayerController.PlayerState.Jumping && newState == PlayerController.PlayerState.Grounded && !repeatedCollision) {
-                StartCoroutine("CameraShake");
-            }
+        //private void OnPlayerJump(PlayerController.PlayerState oldState, PlayerController.PlayerState newState, bool repeatedCollision) {
+        //    if(oldState == PlayerController.PlayerState.Jumping && newState == PlayerController.PlayerState.Grounded && !repeatedCollision) {
+        //        StartCoroutine("CameraShake");
+        //    }
+        //}
+        private void OnPlayerJump() {
+            StartCoroutine("CameraShake");
         }
 
         private IEnumerator CameraShake() {
