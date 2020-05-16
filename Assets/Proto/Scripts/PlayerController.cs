@@ -5,7 +5,6 @@ using UnityEngine.Events;
 namespace Prototipo {
 
     public class JumpbarChangeEvent : UnityEvent<float> { }
-    //public class PlayerJumpEvent : UnityEvent<PlayerController.PlayerState, PlayerController.PlayerState, bool> { }
     public class PlayerJumpEvent : UnityEvent { }
 
     [RequireComponent(typeof(Rigidbody2D))]
