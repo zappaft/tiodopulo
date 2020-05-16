@@ -26,6 +26,7 @@ namespace Prototipo {
         [SerializeField] private Image powerbarFill;
         [SerializeField] private Text scoreText;
         [SerializeField] private Text endScoreText;
+        [SerializeField] private Text highScore;
 
         #region Animations
         [SerializeField] private GameObject introObj;
@@ -74,6 +75,7 @@ namespace Prototipo {
             GameManager.ScoreChangeEvent.AddListener(OnScoreChange);
             AdjustMenu();
             powerbarGradient = GetGradient();
+            highScore.text = PlayerPrefs.GetInt("HighScore", 0).ToString();
         }
 
         private void Update() {
@@ -183,6 +185,11 @@ namespace Prototipo {
         private void OnScoreChange(int newScore) {
             scoreText.text = newScore.ToString();
             endScoreText.text = newScore.ToString();
+            if (newScore > PlayerPrefs.GetInt("HighScore", 0))
+            {
+                PlayerPrefs.SetInt("HighScore", newScore);
+                highScore.text = newScore.ToString();
+            }
         }
     }
 }
