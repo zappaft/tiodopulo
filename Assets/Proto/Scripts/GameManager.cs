@@ -46,7 +46,7 @@ namespace Prototipo {
         public float CamSpeed { get => _camSpeed; }
         public Vector2 SpawnTimeRange { 
             get {
-                return _spawnTimeRange / (_camSpeed * .75f);
+                return _spawnTimeRange / (_camSpeed * .90f);
             }
         }
         public bool OnlyOneJump { get => _onlyOneJump; }
