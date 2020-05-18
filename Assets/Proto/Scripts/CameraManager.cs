@@ -19,19 +19,13 @@ namespace Prototipo {
             GameManager.Instance.StateChangeEvent?.AddListener(OnStateChange);
             cam.GetComponent<CameraController>().CamCollisionEvent?.AddListener(OnCamCollision);
             camParent = cam.transform.parent.gameObject;
-            GameManager.ScoreChangeEvent.AddListener(MultScoreWithVel);
         }
 
-        private void Update() {
+        private void FixedUpdate() {
             if (!GameManager.Instance.InGame) return;
             MoveCamera();
         }
 
-        private void MultScoreWithVel(int multTo)
-        {
-            multTo++;
-            MultValue = multTo;
-        }
         private void OnStateChange(GameManager.GameState oldState, GameManager.GameState newState) {
             //Debug.Log($"cameramanager state changed: {oldState} => {newState}");
         }
@@ -40,15 +34,7 @@ namespace Prototipo {
         /// Basicamente, move a câmera. Processa qualquer cálculo para movimentação da mesma.
         /// </summary>
         private void MoveCamera() {
-            if (MultValue == 0)
-            {
-                camParent.transform.position += Vector3.right * GameManager.Instance.CamSpeed * Time.deltaTime;
-            }
-            else
-            {
-                camParent.transform.position += Vector3.right * GameManager.Instance.CamSpeed 
-                                                * Time.deltaTime * MultValue / GameManager.Instance.CamSpeed;
-            }
+            camParent.transform.position += Vector3.right * GameManager.Instance.CamSpeed * Time.deltaTime;
         }
 
         /// <summary>

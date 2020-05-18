@@ -41,12 +41,13 @@ namespace Prototipo {
 
         [SerializeField] private bool _onlyOneJump;
         [SerializeField] private float _camSpeed;
+        private float SCORESPEEDFACTOR = .15f;
         [SerializeField] private Vector2 _spawnTimeRange;
 
-        public float CamSpeed { get => _camSpeed; }
+        public float CamSpeed { get => _camSpeed + (SCORESPEEDFACTOR * Score); }
         public Vector2 SpawnTimeRange { 
             get {
-                return _spawnTimeRange / (_camSpeed * .90f);
+                return _spawnTimeRange / (CamSpeed * .75f);
             }
         }
         public bool OnlyOneJump { get => _onlyOneJump; }
