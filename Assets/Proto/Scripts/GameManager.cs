@@ -41,7 +41,7 @@ namespace Prototipo {
 
         [SerializeField] private bool _onlyOneJump;
         [SerializeField] private float _camSpeed;
-        private float SCORESPEEDFACTOR = .15f;
+        private const float SCORESPEEDFACTOR = .15f;
         [SerializeField] private Vector2 _spawnTimeRange;
 
         public float CamSpeed { get => _camSpeed + (SCORESPEEDFACTOR * Score); }

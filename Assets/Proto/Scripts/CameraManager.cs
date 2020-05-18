@@ -13,8 +13,6 @@ namespace Prototipo {
         [SerializeField] private GameObject cam;
         private GameObject camParent;
 
-        public int MultValue { get; private set; }
-
         private void Start() {
             GameManager.Instance.StateChangeEvent?.AddListener(OnStateChange);
             cam.GetComponent<CameraController>().CamCollisionEvent?.AddListener(OnCamCollision);
