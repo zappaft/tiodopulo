@@ -25,6 +25,5 @@ namespace Prototipo {
             return false;
         }
     }
-
     public enum PlayerInputType { JumpDown, JumpUp, Pause }
 }

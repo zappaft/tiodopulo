@@ -85,6 +85,11 @@ namespace Prototipo {
                 if (InputController.DeviceBasedInput(PlayerInputType.JumpDown) && State == PlayerState.Grounded) StartCoroutine("IncreasePowerbar");
                 if (InputController.DeviceBasedInput(PlayerInputType.JumpUp) && State == PlayerState.Grounded) ReleaseJump();
             }
+            else if(SystemInfo.deviceType == DeviceType.Handheld)
+            {
+                if (InputController.DeviceBasedInput(PlayerInputType.JumpDown) && State == PlayerState.Grounded) StartCoroutine("IncreasePowerbar");
+                if (InputController.DeviceBasedInput(PlayerInputType.JumpUp) && State == PlayerState.Grounded) ReleaseJump();
+            }
         }
 
         /// <summary>

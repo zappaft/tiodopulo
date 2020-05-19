@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using System;
+using System.Collections.Generic;
 
 namespace Prototipo {
 
@@ -27,6 +29,17 @@ namespace Prototipo {
         [SerializeField] private Text scoreText;
         [SerializeField] private Text endScoreText;
         [SerializeField] private Text highScore;
+
+        #region Buttons and Screens
+        //buttons
+        [SerializeField] private GameObject startBTN;
+        [SerializeField] private GameObject highScoreBTN;
+        [SerializeField] private GameObject aboutBTN;
+        [SerializeField] private GameObject returnBTN;
+        //screens
+        [SerializeField] private GameObject highScoreScreen;
+        [SerializeField] private GameObject aboutScreen;
+        #endregion
 
         #region Animations
         [SerializeField] private GameObject introObj;
@@ -121,7 +134,7 @@ namespace Prototipo {
         }
 
         private void EndGameInput() {
-            if (Input.GetKeyUp(KeyCode.Space)) {
+            if (Input.GetKeyUp(KeyCode.Space) || Input.GetMouseButtonDown(0)) {
                 GameSceneManager.Instance.ReloadScene();
             }
         }
@@ -191,5 +204,37 @@ namespace Prototipo {
                 highScore.text = newScore.ToString();
             }
         }
+    
+        #region Buttons Methods and Methods
+        //Button Methods
+        public void OnStartBTNClick() => IntroOut();
+        public void OnHighScoreBTNClick() 
+        {
+            IntroToHighScore();
+        }
+        public void OnAboutBTNClick() => IntroToAbout();
+
+        //Methods
+        private void IntroToHighScore()
+        {
+            introObj.SetActive(!introObj.activeSelf);
+            highScoreScreen.SetActive(!highScoreScreen.activeSelf);
+        }
+
+        public void OnReturnBTNCLick(GameObject obj)
+        {
+            obj.SetActive(!obj.activeSelf);
+            introObj.SetActive(true);
+        }
+
+        private void IntroToAbout()
+        {
+            introObj.SetActive(!introObj.activeSelf);
+            aboutScreen.SetActive(!aboutScreen.activeSelf);
+
+        }
+        #endregion
+
+      
     }
 }
