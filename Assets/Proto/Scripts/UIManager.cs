@@ -28,18 +28,16 @@ namespace Prototipo {
         [SerializeField] private Image powerbarFill;
         [SerializeField] private Text scoreText;
         [SerializeField] private Text endScoreText;
+        //[SerializeField] private Text positionText;
         [SerializeField] private Text highScore;
 
-        #region Buttons and Screens
-        //buttons
-        [SerializeField] private GameObject startBTN;
-        [SerializeField] private GameObject highScoreBTN;
-        [SerializeField] private GameObject aboutBTN;
-        [SerializeField] private GameObject returnBTN;
+        #region Screens
         //screens
         [SerializeField] private GameObject highScoreScreen;
         [SerializeField] private GameObject aboutScreen;
         #endregion
+
+
 
         #region Animations
         [SerializeField] private GameObject introObj;
@@ -66,6 +64,8 @@ namespace Prototipo {
         public static DevMenuEvent DevMenuEvent { get; private set; }
         #endregion
 
+        private List<int> scores;
+
         private void Initialize() {
             onlyOneJump.isOn = initializer.onlyOneJump;
             camSpeed.value = initializer.camSpeed;
@@ -88,7 +88,8 @@ namespace Prototipo {
             GameManager.ScoreChangeEvent.AddListener(OnScoreChange);
             AdjustMenu();
             powerbarGradient = GetGradient();
-            highScore.text = PlayerPrefs.GetInt("HighScore", 0).ToString();
+            scores = new List<int>();
+            highScore.text = PlayerPrefs.GetInt("HighScore", 0).ToString();        
         }
 
         private void Update() {
@@ -202,36 +203,24 @@ namespace Prototipo {
             {
                 PlayerPrefs.SetInt("HighScore", newScore);
                 highScore.text = newScore.ToString();
+                scores.Add(newScore);
             }
         }
     
         #region Buttons Methods and Methods
-        //Button Methods
+        //Buttons events
         public void OnStartBTNClick() => IntroOut();
-        public void OnHighScoreBTNClick() 
-        {
-            IntroToHighScore();
-        }
-        public void OnAboutBTNClick() => IntroToAbout();
+        public void OnHighScoreBTNClick() => SetActiveUI(highScoreScreen.name);
+        
+        public void OnAboutBTNClick() => SetActiveUI(aboutScreen.name);
+        public void OnReturnBTNCLick() => SetActiveUI(introObj.name);
 
-        //Methods
-        private void IntroToHighScore()
+       //methods
+        private void SetActiveUI(string activeUI)
         {
-            introObj.SetActive(!introObj.activeSelf);
-            highScoreScreen.SetActive(!highScoreScreen.activeSelf);
-        }
-
-        public void OnReturnBTNCLick(GameObject obj)
-        {
-            obj.SetActive(!obj.activeSelf);
-            introObj.SetActive(true);
-        }
-
-        private void IntroToAbout()
-        {
-            introObj.SetActive(!introObj.activeSelf);
-            aboutScreen.SetActive(!aboutScreen.activeSelf);
-
+            highScoreScreen.SetActive(activeUI.Equals(highScoreScreen.name));
+            aboutScreen.SetActive(activeUI.Equals(aboutScreen.name));
+            introObj.SetActive(activeUI.Equals(introObj.name));
         }
         #endregion
 
