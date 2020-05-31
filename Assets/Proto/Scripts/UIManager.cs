@@ -37,8 +37,6 @@ namespace Prototipo {
         [SerializeField] private GameObject aboutScreen;
         #endregion
 
-
-
         #region Animations
         [SerializeField] private GameObject introObj;
         private Animation introAnimation;
@@ -89,7 +87,7 @@ namespace Prototipo {
             AdjustMenu();
             powerbarGradient = GetGradient();
             scores = new List<int>();
-            highScore.text = PlayerPrefs.GetInt("HighScore", 0).ToString();        
+            highScore.text = PlayerPrefs.GetInt("HighScore", 0).ToString();
         }
 
         private void Update() {
@@ -213,7 +211,11 @@ namespace Prototipo {
         public void OnHighScoreBTNClick() => SetActiveUI(highScoreScreen.name);
         
         public void OnAboutBTNClick() => SetActiveUI(aboutScreen.name);
-        public void OnReturnBTNCLick() => SetActiveUI(introObj.name);
+        public void OnReturnBTNCLick(GameObject nowScreen)
+        {
+            nowScreen.SetActive(!nowScreen.activeSelf);
+            SetActiveUI(introObj.name);
+        }
 
        //methods
         private void SetActiveUI(string activeUI)
@@ -224,6 +226,6 @@ namespace Prototipo {
         }
         #endregion
 
-      
+        
     }
 }
