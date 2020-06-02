@@ -35,7 +35,8 @@ namespace Prototipo {
             get => _jumpbarPower;
             set {
                 _jumpbarPower = value;
-                float adjustedValue = (((value - jumpPowerbarRange.x) * (Vector2.up.y - Vector2.up.x)) / (jumpPowerbarRange.y - jumpPowerbarRange.x)) + Vector2.up.x;
+                float adjustedValue = (((value - jumpPowerbarRange.x) * (Vector2.up.y - Vector2.up.x)) 
+                    / (jumpPowerbarRange.y - jumpPowerbarRange.x)) + Vector2.up.x;
                 OnJumpbarChangeEvent?.Invoke(adjustedValue);
             }
         }
@@ -104,6 +105,7 @@ namespace Prototipo {
                 if (JumpbarPower <= jumpPowerbarRange.x) positiveJumpbarPower = true;
 
                 JumpbarPower += jumpPowerbarModifier * Time.deltaTime * (positiveJumpbarPower ? 1 : -1);
+                Debug.Log(JumpbarPower);
                 yield return null;
             }
         }
