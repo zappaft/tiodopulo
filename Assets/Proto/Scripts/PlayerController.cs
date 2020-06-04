@@ -151,7 +151,10 @@ namespace Prototipo {
                     if (GameManager.Instance.OnlyOneJump) canJump = false;
                 }
             }
-
+            if (collision.CompareTag("CreateNewTemplate"))
+            {
+                GetComponent<SpawnTemplate>().InstantiateNewTemplate();
+            }
             if (collision.CompareTag("Death")) {
                 GameManager.Instance.GameOver();
             }

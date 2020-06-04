@@ -14,9 +14,13 @@ public class SpawnTemplate : MonoBehaviour
     {
         if (newState == GameManager.GameState.Playing)
         {
-            int rand = Random.Range(0, templates.Length);
-            Instantiate(templates[rand], transform.position, Quaternion.identity);
+            InstantiateNewTemplate();
         }
+    }
+    public void InstantiateNewTemplate()
+    {
+        int rand = Random.Range(0, templates.Length);
+        Instantiate(templates[rand], transform.position, Quaternion.identity);
     }
     /*
      */
