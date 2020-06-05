@@ -105,7 +105,6 @@ namespace Prototipo {
                 if (JumpbarPower <= jumpPowerbarRange.x) positiveJumpbarPower = true;
 
                 JumpbarPower += jumpPowerbarModifier * Time.deltaTime * (positiveJumpbarPower ? 1 : -1);
-                Debug.Log(JumpbarPower);
                 yield return null;
             }
         }
@@ -153,7 +152,8 @@ namespace Prototipo {
             }
             if (collision.CompareTag("CreateNewTemplate"))
             {
-                GetComponent<SpawnTemplate>().InstantiateNewTemplate();
+                Debug.Log("Instanciado playercontroller");
+                SpawnTemplate.Instantiate.InstantiateNewTemplate();
             }
             if (collision.CompareTag("Death")) {
                 GameManager.Instance.GameOver();
